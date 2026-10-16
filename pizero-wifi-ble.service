@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspberry Pi BLE Wi-Fi Setup Service
+After=dbus.service bluetooth.service hciuart.service network.target
+Wants=bluetooth.service hciuart.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/pizero-wifi-ble
+ExecStartPre=-/bin/sh -c 'rfkill unblock bluetooth 2>/dev/null || true; hciconfig hci0 up 2>/dev/null || true; bluetoothctl power on 2>/dev/null || true'
+ExecStart=/opt/pizero-wifi-ble/venv/bin/python3 /opt/pizero-wifi-ble/wifi_ble_agent.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
